@@ -17,6 +17,7 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  intl: ^0.16.1
   flutter:
     sdk: flutter
 
@@ -70,3 +71,16 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: Futura
+      fonts:
+        - asset: fonts/Futura-book.ttf
+    - family: FuturaBold
+      fonts:
+        - asset: fonts/Futura-bold.ttf
+    - family: Varela
+      fonts:
+        - asset: fonts/VarelaRound-Regular.ttf
+    - family: Proxima Nova
+      fonts:
+        - asset: fonts/proxima-nova.ttf  
