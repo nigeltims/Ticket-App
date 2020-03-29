@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_login_ui/utilities/loginstyle.dart';
+import 'package:ticket_app/utilities/loginstyle.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
