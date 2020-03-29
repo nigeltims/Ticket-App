@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Futura',
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: LoginScreen(),
     );
   }
 }

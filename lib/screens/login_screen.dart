@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
             keyboardType: TextInputType.number,
             style: TextStyle(
               color: Colors.white,
-              fontFamily: 'OpenSans',
+              fontFamily: 'Futura',
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
             letterSpacing: 1.5,
             fontSize: 18.0,
             fontWeight: FontWeight.bold,
-            fontFamily: 'OpenSans',
+            fontFamily: 'Futura',
           ),
         ),
       ),
@@ -125,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         'Sign In',
                         style: TextStyle(
                           color: Colors.white,
-                          fontFamily: 'OpenSans',
+                          fontFamily: 'Futura',
                           fontSize: 30.0,
                           fontWeight: FontWeight.bold,
                         ),
