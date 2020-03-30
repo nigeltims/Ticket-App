@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'homePage.dart';
 import 'screens/login_screen.dart';
+import 'package:ticket_app/services/authService.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Futura',
         primarySwatch: Colors.blue,
       ),
-      home: LoginScreen(),
+      home: AuthService().handleAuth(),
     );
   }
 }

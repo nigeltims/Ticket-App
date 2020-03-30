@@ -1,7 +1,10 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'models/ticketItem.dart';
+import 'screens/login_screen.dart';
+import 'services/authService.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -10,6 +13,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+    String uid;
+
+
+  @override
+  void initState(){
+    this.uid = '';
+    FirebaseAuth.instance.currentUser().then((val){
+      setState(() {
+        this.uid = val.uid;
+      });
+    }).catchError((e){
+      print(e);
+    });
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +84,11 @@ class _HomePageState extends State<HomePage> {
           SizedBox(
           width: 180,
           ),
-          IconButton(icon: Icon(Icons.settings), onPressed: (){})
+          IconButton(icon: Icon(Icons.settings), onPressed: (){
+                FirebaseAuth.instance.signOut();
+          Navigator.push(context,
+              CupertinoPageRoute(builder: (context) => AuthService().handleAuth()));
+          })
           ],
         ),
         Column(

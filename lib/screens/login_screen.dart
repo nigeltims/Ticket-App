@@ -1,60 +1,119 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:ticket_app/services/authService.dart';
 import 'package:ticket_app/utilities/loginstyle.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  //bool _rememberMe = false;
+class _LoginPageState extends State<LoginPage> {
+  final formKey = new GlobalKey<FormState>();
 
-  TextEditingController phoneTFController = new TextEditingController();
+  String phoneNo, verificationId, smsCode;
 
-  Widget _buildPhoneTF() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          'Phone Number',
-          style: kLabelStyle,
-        ),
-        SizedBox(height: 10.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: kBoxDecorationStyle,
-          height: 60.0,
-          child: TextField(
-            controller: phoneTFController,
-            keyboardType: TextInputType.number,
+  bool codeSent = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Form(
+          key: formKey,
+          child: codeSent? 
+          Column(
+            children: <Widget>[
+             SizedBox(
+                height: 50,
+              ),
+              Row(
+                children: <Widget>[
+                  IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: (){
+                    Navigator.of(context).pop();
+                  }),
+                ],
+              ),
+              SizedBox(
+                height: 50,
+              ),
+                  Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: PinCodeTextField(
+                    length: 6,
+                    obsecureText: false,
+                    animationType: AnimationType.fade,
+                    shape: PinCodeFieldShape.box,
+                    animationDuration: Duration(milliseconds: 300),
+                    borderRadius: BorderRadius.circular(5),
+                    fieldHeight: 50,
+                    fieldWidth: 40,
+                                      onChanged: (val) {
+                                        setState(() {
+                                          this.smsCode = val;
+                                        });
+                                      },
+                ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: _buildLoginBtn(),
+                  )
+            ],
+          )
+
+
+
+
+          :
+
+
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.only(left: 25.0, right: 25.0),
+                  child: TextFormField(
+                    keyboardType: TextInputType.phone,
             style: TextStyle(
-              color: Colors.white,
+              color: Colors.black,
               fontFamily: 'Futura',
             ),
+
             decoration: InputDecoration(
               border: InputBorder.none,
+              
               contentPadding: EdgeInsets.only(top: 14.0),
               prefixIcon: Icon(
                 Icons.phone_iphone,
-                color: Colors.white,
+                color: Colors.black,
               ),
               hintText: 'Enter your phone number',
-              hintStyle: kHintTextStyle,
+              // hintStyle: kHintTextStyle,
             ),
+                    onChanged: (val) {
+                      setState(() {
+                        this.phoneNo = val;
+                      });
+                    },
+                  )),
+              Padding(
+                  padding: EdgeInsets.only(left: 25.0, right: 25.0),
+                  child: _buildLoginBtn()
+                      )
+            ],
+          )
+          
           ),
-        ),
-      ],
     );
   }
 
-  void submitPhoneNumber(context){
-    
-    print('continue pressed');
-    String phoneNumber = phoneTFController.text;
-    //Navigator.of(context).pop(phoneNumber);
 
-  }
+
+
+
+
+
 
   Widget _buildLoginBtn() {
     return Container(
@@ -62,9 +121,9 @@ class _LoginScreenState extends State<LoginScreen> {
       width: double.infinity,
       child: RaisedButton(
         elevation: 5.0,
-        onPressed: () {
-          submitPhoneNumber(context);
-          },
+                        onPressed: () {
+                        codeSent ? AuthService().signInWithOTP(smsCode, verificationId):verifyPhone(phoneNo);
+                      },
         padding: EdgeInsets.all(15.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
@@ -84,66 +143,33 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Stack(
-            children: <Widget>[
-              Container(
-                height: double.infinity,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFF39e369),
-                      Color(0xFF11b03e),
-                    ],
-                    stops: [0,1],
-                  ),
-                ),
-              ),
-              Container(
-                height: double.infinity,
-                child: SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.only(
-                    left: 40.0,
-                    right:40.0,
-                    top: 200.0,
-                  //  vertical: 200.0,//120.0,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        'Sign In',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'Futura',
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 30.0),
-                      _buildPhoneTF(),
-                      SizedBox(
-                        height: 30.0,
-                      ),
-                      _buildLoginBtn(),
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+  Future<void> verifyPhone(phoneNo) async {
+    final PhoneVerificationCompleted verified = (AuthCredential authResult) {
+      AuthService().signIn(authResult);
+    };
+
+    final PhoneVerificationFailed verificationfailed =
+        (AuthException authException) {
+      print('${authException.message}');
+    };
+
+    final PhoneCodeSent smsSent = (String verId, [int forceResend]) {
+      this.verificationId = verId;
+      setState(() {
+        this.codeSent = true;
+      });
+    };
+
+    final PhoneCodeAutoRetrievalTimeout autoTimeout = (String verId) {
+      this.verificationId = verId;
+    };
+
+    await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: phoneNo,
+        timeout: const Duration(seconds: 5),
+        verificationCompleted: verified,
+        verificationFailed: verificationfailed,
+        codeSent: smsSent,
+        codeAutoRetrievalTimeout: autoTimeout);
   }
 }
