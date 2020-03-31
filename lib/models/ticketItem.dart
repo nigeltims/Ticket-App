@@ -57,7 +57,7 @@ class TicketItem extends StatelessWidget {
                   fontSize: 18
                 ),),
                 SizedBox(
-                  width: 160,
+                  width: 130,
                 ),
                 Text(DateFormat('yyyy-MM-dd').format(date))
               ],

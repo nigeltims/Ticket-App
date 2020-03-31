@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'models/ticketItem.dart';
 import 'services/authService.dart';
+import 'utilities/column_builder.dart';
 
 class ListPage extends StatefulWidget {
   @override
@@ -80,7 +81,30 @@ class _ListPageState extends State<ListPage> {
                   height: 15,
                 ),
 
-                ListView.builder(
+                ColumnBuilder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (_,index){
+
+                    return Column(children: <Widget>[
+                      SizedBox(
+                       height: 15,
+                      ),
+                      TicketItem(
+                        //color will be set using ticket document field
+                        foreColor: Color(0xff2BC8D8),
+                        backColor: Color(0xffE5F7F8),
+                        plateID: snapshot.data[index].data['plateID'], //"SUR 360",
+                        reason: snapshot.data[index].data['reason'], //"Parking in front of fire hydrant",
+                        amount: '\$' + snapshot.data[index].data['amount'].toString(), //"\$55"
+                        address: snapshot.data[index].data['address'],//"153 Burry Road",
+                        date: DateTime.now(),//snapshot.data[index].data['date'],
+                      ),
+                    ]);
+
+                }
+                )
+
+                /*Expanded(child:ListView.builder(
                   itemCount: snapshot.data.length,
                   itemBuilder: (_,index){
 
@@ -92,15 +116,15 @@ class _ListPageState extends State<ListPage> {
                       reason: snapshot.data[index].data['reason'], //"Parking in front of fire hydrant",
                       amount: '\$' + snapshot.data[index].data['amount'].toString(), //"\$55"
                       address: snapshot.data[index].data['address'],//"153 Burry Road",
-                      date: snapshot.data[index].data['date'],//DateTime.now(),
+                      date: DateTime.now(),//snapshot.data[index].data['date'],
                     );
 
                 }
-                )
-                ]
-                );
+                );*///)
+                //]
+                //);
 
-          }
+              ]);}
         }
       )      
     );
