@@ -1,3 +1,6 @@
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +17,34 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-    String uid;
+    
+  String uid;
 
+  File pickedImage;
+
+  Future pickImage() async {
+    var tempStore = await ImagePicker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      pickedImage = tempStore;
+    });
+
+    readText();
+  }
+
+  Future readText() async{
+    FirebaseVisionImage ourImage = FirebaseVisionImage.fromFile(pickedImage);
+    TextRecognizer recognizeText = FirebaseVision.instance.textRecognizer();
+    VisionText readText = await recognizeText.processImage(ourImage);
+
+    for (TextBlock block in readText.blocks){
+      for (TextLine line in block.lines){
+        for (TextElement word in line.elements){
+          print(word.text);
+        }
+      }
+    }
+  }
 
   @override
   void initState(){
@@ -39,7 +68,7 @@ class _HomePageState extends State<HomePage> {
     backgroundColor: Color(0xffffffff),
     foregroundColor: Color(0xff2BC8D8),
     shape: CircleBorder(side: BorderSide(color: Color(0xff2BC8D8), width: 2.0)),
-    onPressed: () { },
+    onPressed: pickImage,//() { },
     tooltip: 'Increment',
     child: Icon(Icons.add),
     elevation: 2.0,
