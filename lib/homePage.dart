@@ -20,11 +20,14 @@ class _HomePageState extends State<HomePage> {
 
   File pickedImage;
 
+  List<String> test = [];
+
   Future pickImage() async {
     var tempStore = await ImagePicker.pickImage(source: ImageSource.camera);
 
     setState(() {
       pickedImage = tempStore;
+      test = [];
     });
 
     readText();
@@ -36,8 +39,14 @@ class _HomePageState extends State<HomePage> {
     VisionText readText = await recognizeText.processImage(ourImage);
 
     for (TextBlock block in readText.blocks) {
-      print(block.text);
+      for (TextLine line in block.lines) {
+        test.add(line.text);
+      }
     }
+
+    print(test);
+    print('Ticket #: ${test[5]}');
+    print('License Plate: ${test[15]}');
   }
 
   @override
