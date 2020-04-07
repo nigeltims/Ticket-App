@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "193430928987",
+    "firebase_url": "https://ticketapp-759c2.firebaseio.com",
+    "project_id": "ticketapp-759c2",
+    "storage_bucket": "ticketapp-759c2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:193430928987:android:e2019231cb025b25d3c97e",
+        "android_client_info": {
+          "package_name": "com.example.ticket_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "193430928987-vntq49oir37ec15rr4166fvbvr6fgu37.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAT-yRBV6Kzijp23xbzjPMCnlxIaZXWqkY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "193430928987-vntq49oir37ec15rr4166fvbvr6fgu37.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
