@@ -75,6 +75,7 @@ class _LoginPageState extends State<LoginPage> {
               Padding(
                   padding: EdgeInsets.only(left: 25.0, right: 25.0),
                   child: TextFormField(
+                    initialValue: "+1",
                     keyboardType: TextInputType.phone,
             style: TextStyle(
               color: Colors.black,
