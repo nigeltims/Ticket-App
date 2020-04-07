@@ -12,6 +12,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   TextEditingController phoneTFController = new TextEditingController();
 
+<<<<<<< Updated upstream
   Widget _buildPhoneTF() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,6 +29,63 @@ class _LoginScreenState extends State<LoginScreen> {
           child: TextField(
             controller: phoneTFController,
             keyboardType: TextInputType.number,
+=======
+  bool codeSent = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Form(
+          key: formKey,
+          child: codeSent? 
+          Column(
+            children: <Widget>[
+             SizedBox(
+                height: 50,
+              ),
+              Row(
+                children: <Widget>[
+                  IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: (){
+                    Navigator.of(context).pop();
+                  }),
+                ],
+              ),
+              SizedBox(
+                height: 50,
+              ),
+                  Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: PinCodeTextField(
+                    length: 6,
+                    obsecureText: false,
+                    animationType: AnimationType.fade,
+                    shape: PinCodeFieldShape.box,
+                    animationDuration: Duration(milliseconds: 300),
+                    borderRadius: BorderRadius.circular(5),
+                    fieldHeight: 50,
+                    fieldWidth: 40,
+                    onChanged: (val) {
+                      setState(() {
+                        this.smsCode = val;
+                      });
+                    },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: _buildLoginBtn(),
+                  )
+            ],
+          )
+          :Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.only(left: 25.0, right: 25.0),
+                  child: TextFormField(
+                    initialValue: "+1",
+                    keyboardType: TextInputType.phone,
+>>>>>>> Stashed changes
             style: TextStyle(
               color: Colors.white,
               fontFamily: 'OpenSans',
