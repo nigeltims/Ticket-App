@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
 
   RegExp ticketCheck = RegExp(r'^..\d{6}');
   RegExp plateCheck = RegExp(r'^[A-Z]{4}\d{3}');
-  RegExp priceCheck = RegExp(r'[$]\s?\d+\.\d{2}');
+  RegExp priceCheck = RegExp(r'[$]\s?\d+[,|\.]?\s?\d{2}');//RegExp(r'[$]\s?\d+\.\d{2}');
   RegExp reasonCheck = RegExp(r'[C|c][o|O]de\s?N[o|O][\.|,]?\s?\d{1,6}');
 
 //Get Image From Camera
@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
           print('Fine is ${priceCheck.firstMatch(ocrLine).group(0)}');
           fine = priceCheck.firstMatch(ocrLine).group(0);
         }
-        //print(ocrLine);
+        print(ocrLine);
       }
     }
   }
