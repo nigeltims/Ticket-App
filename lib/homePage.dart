@@ -16,22 +16,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String uid;
-
+  String uid, ticketNumber, licensePlate, ocrLine, fine, codeNo;
+  int step;
   File pickedImage;
 
-  List<String> test = [];
+  RegExp ticketCheck = RegExp(r'^..\d{6}');
+  RegExp plateCheck = RegExp(r'^[A-Z]{4}\d{3}');
+  RegExp priceCheck = RegExp(r'[$]\s?\d+\.\d{2}');
+  RegExp reasonCheck = RegExp(r'[C|c][o|O]de\s?N[o|O][\.|,]?\s?\d{1,6}');
+
+//Get Image From Camera
 
   Future pickImage() async {
     var tempStore = await ImagePicker.pickImage(source: ImageSource.camera);
 
     setState(() {
       pickedImage = tempStore;
-      test = [];
+      step = 1;
     });
 
     readText();
   }
+
+//Use Firebase ML-kit for OCR and parse out ticket #, license plate, fine, and reason (code #)
 
   Future readText() async {
     FirebaseVisionImage ourImage = FirebaseVisionImage.fromFile(pickedImage);
@@ -40,13 +47,50 @@ class _HomePageState extends State<HomePage> {
 
     for (TextBlock block in readText.blocks) {
       for (TextLine line in block.lines) {
-        test.add(line.text);
+        ocrLine = line.text;
+
+        switch (step) {
+          case 1:
+            {
+              if (ticketCheck.hasMatch(ocrLine)) {
+                print('Ticket Number is $ocrLine');
+                ticketNumber = ocrLine;
+                step++;
+              }
+            }
+            break;
+          case 2:
+            {
+              if (plateCheck.hasMatch(ocrLine)) {
+                print('License Plate is $ocrLine');
+                licensePlate = ocrLine;
+                step++;
+              }
+            }
+            break;
+          case 3:
+            {
+              if (reasonCheck.hasMatch(ocrLine)) {
+                print(
+                    'Code # is ${RegExp(r'\d{1,6}').firstMatch(ocrLine).group(0)}');
+                codeNo = RegExp(r'\d{1,6}').firstMatch(ocrLine).group(0);
+                step++;
+              }
+            }
+            break;
+          case 4:
+            {
+              if (priceCheck.hasMatch(ocrLine)) {
+                print('Fine is ${priceCheck.firstMatch(ocrLine).group(0)}');
+                fine = priceCheck.firstMatch(ocrLine).group(0);
+                step++;
+              }
+            }
+            break;
+        }
+        print(ocrLine);
       }
     }
-
-    print(test);
-    print('Ticket #: ${test[5]}');
-    print('License Plate: ${test[15]}');
   }
 
   @override
