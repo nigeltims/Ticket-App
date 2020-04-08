@@ -49,46 +49,26 @@ class _HomePageState extends State<HomePage> {
       for (TextLine line in block.lines) {
         ocrLine = line.text;
 
-        switch (step) {
-          case 1:
-            {
-              if (ticketCheck.hasMatch(ocrLine)) {
-                print('Ticket Number is $ocrLine');
-                ticketNumber = ocrLine;
-                step++;
-              }
-            }
-            break;
-          case 2:
-            {
-              if (plateCheck.hasMatch(ocrLine)) {
-                print('License Plate is $ocrLine');
-                licensePlate = ocrLine;
-                step++;
-              }
-            }
-            break;
-          case 3:
-            {
-              if (reasonCheck.hasMatch(ocrLine)) {
-                print(
-                    'Code # is ${RegExp(r'\d{1,6}').firstMatch(ocrLine).group(0)}');
-                codeNo = RegExp(r'\d{1,6}').firstMatch(ocrLine).group(0);
-                step++;
-              }
-            }
-            break;
-          case 4:
-            {
-              if (priceCheck.hasMatch(ocrLine)) {
-                print('Fine is ${priceCheck.firstMatch(ocrLine).group(0)}');
-                fine = priceCheck.firstMatch(ocrLine).group(0);
-                step++;
-              }
-            }
-            break;
+        if (ticketCheck.hasMatch(ocrLine)) {
+          print('Ticket Number is $ocrLine');
+          ticketNumber = ocrLine;
         }
-        print(ocrLine);
+
+        if (plateCheck.hasMatch(ocrLine)) {
+          print('License Plate is $ocrLine');
+          licensePlate = ocrLine;
+        }
+
+        if (reasonCheck.hasMatch(ocrLine)) {
+          print('Code # is ${RegExp(r'\d{1,6}').firstMatch(ocrLine).group(0)}');
+          codeNo = RegExp(r'\d{1,6}').firstMatch(ocrLine).group(0);
+        }
+
+        if (priceCheck.hasMatch(ocrLine)) {
+          print('Fine is ${priceCheck.firstMatch(ocrLine).group(0)}');
+          fine = priceCheck.firstMatch(ocrLine).group(0);
+        }
+        //print(ocrLine);
       }
     }
   }
