@@ -1,7 +1,7 @@
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ticket_app/services/authService.dart';
-import 'package:ticket_app/utilities/loginstyle.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class LoginPage extends StatefulWidget {
@@ -74,6 +74,7 @@ class _LoginPageState extends State<LoginPage> {
               Padding(
                   padding: EdgeInsets.only(left: 25.0, right: 25.0),
                   child: TextFormField(
+                    initialValue: "+1",
                     keyboardType: TextInputType.phone,
             style: TextStyle(
               color: Colors.black,
