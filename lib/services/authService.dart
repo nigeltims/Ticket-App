@@ -44,7 +44,7 @@ class AuthService {
     String uid = user.uid.toString();
 
     Firestore.instance.collection('users').document(uid).get().then((onValue) async {
-    onValue.exists ? print('firebase entry exists') : await Firestore.instance.collection('users').document(uid).collection('tickets').document().setData({});
+    onValue.exists ? print('firebase entry exists') : await Firestore.instance.collection('users').document(uid).setData({});//.collection('tickets').document().setData({});
     });
   }
 
