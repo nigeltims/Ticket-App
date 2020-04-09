@@ -70,15 +70,14 @@ class _HomePageState extends State<HomePage> {
           fine = priceCheck
               .firstMatch(ocrLine)
               .group(0)
-              .replaceAll(" ", "")
-              .replaceAll(',', '');
+              .replaceAllMapped(RegExp(r'[\s|\$|,]'), (Match m) => '');
           if (fine[fine.length - 3] != '.') {
             fine =
                 '${fine.substring(1, fine.length - 2)}.${fine.substring(fine.length - 2)}';
           }
           print('Fine is $fine');
         }
-        print(ocrLine);
+        //print(ocrLine);
       }
     }
 
