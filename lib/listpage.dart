@@ -99,7 +99,7 @@ class _ListPageState extends State<ListPage> {
                                 reason: snapshot.data[index].data['reason'], //"Parking in front of fire hydrant",
                                 amount: '\$' + snapshot.data[index].data['fine'].toString(), //"\$55"
                                 address: snapshot.data[index].data['address'], //"153 Burry Road",
-                                date: DateTime.now(), //snapshot.data[index].data['date'],
+                                date: snapshot.data[index].data['infractionDate'].toDate(), //snapshot.data[index].data['date'],
                               ),
                             ]);
                           })

@@ -35,6 +35,9 @@ class WizardFormBloc extends FormBloc<String, String> {
 
   final reason = TextFieldBloc();
 
+  final infractionDate = InputFieldBloc<DateTime, Object>();
+
+
   WizardFormBloc(
       String ticketNumber, String licensePlate, String fine, String codeNo) {
     this.fineForm = TextFieldBloc(
@@ -53,7 +56,7 @@ class WizardFormBloc extends FormBloc<String, String> {
     );
     addFieldBlocs(
       step: 1,
-      fieldBlocs: [ticket_id, plate, code, fineForm, address],
+      fieldBlocs: [ticket_id, plate, code, fineForm, address, infractionDate],
     );
     addFieldBlocs(
       step: 2,
@@ -89,9 +92,10 @@ class WizardFormBloc extends FormBloc<String, String> {
         'plate': plate.value,
         'code': code.value,
         'fine': fineForm.value,
-        'address': address.value
+        'address': address.value,
+        'infractionDate': infractionDate.value
       });
-      
+
       emitSuccess();
     }
   }
@@ -106,6 +110,7 @@ class WizardFormBloc extends FormBloc<String, String> {
     ticket_id.close();
     plate.close();
     address.close();
+    infractionDate.close();
   }
 
 }
@@ -275,6 +280,17 @@ class _WizardFormState extends State<WizardForm> {
               prefixIcon: Icon(Icons.pin_drop),
             ),
           ),
+          DateTimeFieldBlocBuilder(
+            dateTimeFieldBloc: wizardFormBloc.infractionDate,
+            firstDate: DateTime(1900),
+            initialDate: DateTime.now(),
+            lastDate: DateTime.now(),
+            format: DateFormat('yyyy-MM-dd'),
+            decoration: InputDecoration(
+              labelText: 'Date of Infraction',
+              prefixIcon: Icon(Icons.calendar_today),
+            ),
+          )
         ],
       ),
     );
