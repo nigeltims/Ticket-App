@@ -31,10 +31,6 @@ class WizardFormBloc extends FormBloc<String, String> {
 
   final lastName = TextFieldBloc();
 
-  final gender = SelectFieldBloc(
-    items: ['Male', 'Female'],
-  );
-
   final birthDate = InputFieldBloc<DateTime, Object>();
 
   final reason = TextFieldBloc();
@@ -53,7 +49,7 @@ class WizardFormBloc extends FormBloc<String, String> {
       validators: [FieldBlocValidators.required]);
     addFieldBlocs(
       step: 0,
-      fieldBlocs: [firstName, lastName, gender, birthDate],
+      fieldBlocs: [firstName, lastName, birthDate],
     );
     addFieldBlocs(
       step: 1,
@@ -80,17 +76,22 @@ class WizardFormBloc extends FormBloc<String, String> {
     } else if (state.currentStep == 2) {
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
       String uid = user.uid.toString();
-      Firestore.instance.collection('users').document(uid).collection('tickets').document().setData(
-        {'first name':firstName.value,
+
+      Firestore.instance.collection('users').document(uid).setData({
+        'first name':firstName.value,
         'last name': lastName.value,
-        'gender': gender.value,
         'birthdate': birthDate.value,
+      });
+
+      Firestore.instance.collection('users').document(uid).collection('tickets').document().setData({
         'reason': reason.value,
         'ticket_id': ticket_id.value,
         'plate': plate.value,
         'code': code.value,
         'fine': fineForm.value,
-        'address': address.value});
+        'address': address.value
+      });
+      
       emitSuccess();
     }
   }
@@ -98,7 +99,6 @@ class WizardFormBloc extends FormBloc<String, String> {
   dispose(){
     firstName.close();
     lastName.close();
-    gender.close();
     birthDate.close();
     reason.close();
     fineForm.close();
@@ -211,14 +211,6 @@ class _WizardFormState extends State<WizardForm> {
             decoration: InputDecoration(
               labelText: 'Last Name',
               prefixIcon: Icon(Icons.person),
-            ),
-          ),
-          RadioButtonGroupFieldBlocBuilder<String>(
-            selectFieldBloc: wizardFormBloc.gender,
-            itemBuilder: (context, value) => value,
-            decoration: InputDecoration(
-              labelText: 'Gender',
-              prefixIcon: SizedBox(),
             ),
           ),
           DateTimeFieldBlocBuilder(
