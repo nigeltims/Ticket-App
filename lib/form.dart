@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:ticket_app/homePage.dart';
@@ -47,13 +49,15 @@ class WizardFormBloc extends FormBloc<String, String> {
         initialValue: ticketNumber, validators: [FieldBlocValidators.required]);
     this.plate = TextFieldBloc(
         initialValue: licensePlate, validators: [FieldBlocValidators.required]);
+    this.address = TextFieldBloc(
+      validators: [FieldBlocValidators.required]);
     addFieldBlocs(
       step: 0,
       fieldBlocs: [firstName, lastName, gender, birthDate],
     );
     addFieldBlocs(
       step: 1,
-      fieldBlocs: [ticket_id, plate, code, fineForm],
+      fieldBlocs: [ticket_id, plate, code, fineForm, address],
     );
     addFieldBlocs(
       step: 2,
@@ -65,6 +69,7 @@ class WizardFormBloc extends FormBloc<String, String> {
   TextFieldBloc code;
   TextFieldBloc ticket_id;
   TextFieldBloc plate;
+  TextFieldBloc address;
 
   @override
   void onSubmitting() async {
@@ -73,9 +78,36 @@ class WizardFormBloc extends FormBloc<String, String> {
     } else if (state.currentStep == 1) {
       emitSuccess();
     } else if (state.currentStep == 2) {
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      String uid = user.uid.toString();
+      Firestore.instance.collection('users').document(uid).collection('tickets').document().setData(
+        {'first name':firstName.value,
+        'last name': lastName.value,
+        'gender': gender.value,
+        'birthdate': birthDate.value,
+        'reason': reason.value,
+        'ticket_id': ticket_id.value,
+        'plate': plate.value,
+        'code': code.value,
+        'fine': fineForm.value,
+        'address': address.value});
       emitSuccess();
     }
   }
+
+  dispose(){
+    firstName.close();
+    lastName.close();
+    gender.close();
+    birthDate.close();
+    reason.close();
+    fineForm.close();
+    code.close();
+    ticket_id.close();
+    plate.close();
+    address.close();
+  }
+
 }
 
 class WizardForm extends StatefulWidget {
@@ -242,6 +274,13 @@ class _WizardFormState extends State<WizardForm> {
             decoration: InputDecoration(
               labelText: 'Fine Amount',
               prefixIcon: Icon(Icons.attach_money),
+            ),
+          ),
+          TextFieldBlocBuilder(
+            textFieldBloc: wizardFormBloc.address,
+            decoration: InputDecoration(
+              labelText: 'Address of Infraction',
+              prefixIcon: Icon(Icons.pin_drop),
             ),
           ),
         ],

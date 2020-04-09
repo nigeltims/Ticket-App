@@ -95,17 +95,11 @@ class _ListPageState extends State<ListPage> {
                                 //color will be set using ticket document field
                                 foreColor: Color(0xff2BC8D8),
                                 backColor: Color(0xffE5F7F8),
-                                plateID: snapshot
-                                    .data[index].data['plateID'], //"SUR 360",
-                                reason: snapshot.data[index].data[
-                                    'reason'], //"Parking in front of fire hydrant",
-                                amount: '\$' +
-                                    snapshot.data[index].data['amount']
-                                        .toString(), //"\$55"
-                                address: snapshot.data[index]
-                                    .data['address'], //"153 Burry Road",
-                                date: DateTime
-                                    .now(), //snapshot.data[index].data['date'],
+                                plateID: snapshot.data[index].data['plate'], //"SUR 360",
+                                reason: snapshot.data[index].data['reason'], //"Parking in front of fire hydrant",
+                                amount: '\$' + snapshot.data[index].data['fine'].toString(), //"\$55"
+                                address: snapshot.data[index].data['address'], //"153 Burry Road",
+                                date: DateTime.now(), //snapshot.data[index].data['date'],
                               ),
                             ]);
                           })
