@@ -43,6 +43,10 @@ class _HomePageState extends State<HomePage> {
 //Use Firebase ML-kit for OCR and parse out ticket #, license plate, fine, and reason (code #)
 
   Future readText() async {
+    if (pickedImage == null) {
+      _loading = false;
+      return;
+    }
     FirebaseVisionImage ourImage = FirebaseVisionImage.fromFile(pickedImage);
     TextRecognizer recognizeText = FirebaseVision.instance.textRecognizer();
     VisionText readText = await recognizeText.processImage(ourImage);
