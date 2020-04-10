@@ -27,6 +27,8 @@ class FormPage extends StatelessWidget {
         fine: fine,
         licensePlate: licensePlate,
         codeNo: codeNo,
+        date: date,
+        location: location,
       ),
     );
   }
@@ -57,7 +59,6 @@ class WizardFormBloc extends FormBloc<String, String> {
         initialValue: location, validators: [FieldBlocValidators.required]);
     this.infractionDate = InputFieldBloc<DateTime, Object>(
         initialValue: date, validators: [FieldBlocValidators.required]);
-    print('Constructor Date is $date');
     addFieldBlocs(
       step: 0,
       fieldBlocs: [firstName, lastName, birthDate],
@@ -131,6 +132,7 @@ class WizardFormBloc extends FormBloc<String, String> {
 class WizardForm extends StatefulWidget {
   final String ticketNumber, licensePlate, fine, codeNo, location;
   DateTime date;
+
   WizardForm({
     Key key,
     this.ticketNumber,
@@ -145,7 +147,7 @@ class WizardForm extends StatefulWidget {
 }
 
 class _WizardFormState extends State<WizardForm> {
-  var _type = StepperType.vertical;
+  var _type = StepperType.horizontal;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -167,7 +169,6 @@ class _WizardFormState extends State<WizardForm> {
               ),
             ),
             child: Scaffold(
-              resizeToAvoidBottomInset: false,
               body: SafeArea(
                 child: FormBlocListener<WizardFormBloc, String, String>(
                   onSubmitting: (context, state) => LoadingDialog.show(context),
@@ -204,7 +205,7 @@ class _WizardFormState extends State<WizardForm> {
 
   FormBlocStep _argumentStep(WizardFormBloc wizardFormBloc) {
     return FormBlocStep(
-      title: Text('Reasoning'),
+      title: Text('Reason'),
       content: Column(
         children: <Widget>[
           TextFieldBlocBuilder(
@@ -261,7 +262,7 @@ class _WizardFormState extends State<WizardForm> {
 
   FormBlocStep _ticketStep(WizardFormBloc wizardFormBloc) {
     return FormBlocStep(
-      title: Text('Ticket Information'),
+      title: Text('Ticket'),
       content: Column(
         children: <Widget>[
           Container(
@@ -315,7 +316,7 @@ class _WizardFormState extends State<WizardForm> {
               labelText: 'Date of Infraction',
               prefixIcon: Icon(Icons.calendar_today),
             ),
-          )
+          ),
         ],
       ),
     );
