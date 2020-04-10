@@ -7,9 +7,16 @@ import 'package:ticket_app/homePage.dart';
 void main() => runApp(FormPage());
 
 class FormPage extends StatelessWidget {
-  final String ticketNumber, licensePlate, fine, codeNo;
+  final String ticketNumber, licensePlate, fine, codeNo, location;
+  final DateTime date;
   const FormPage(
-      {Key key, this.ticketNumber, this.licensePlate, this.fine, this.codeNo})
+      {Key key,
+      this.ticketNumber,
+      this.licensePlate,
+      this.fine,
+      this.codeNo,
+      this.date,
+      this.location})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -27,19 +34,17 @@ class FormPage extends StatelessWidget {
 
 class WizardFormBloc extends FormBloc<String, String> {
   static String ticketNumber;
-  final firstName = TextFieldBloc();
+  final firstName = TextFieldBloc(validators: [FieldBlocValidators.required]);
 
-  final lastName = TextFieldBloc();
+  final lastName = TextFieldBloc(validators: [FieldBlocValidators.required]);
 
-  final birthDate = InputFieldBloc<DateTime, Object>();
+  final birthDate = InputFieldBloc<DateTime, Object>(
+      validators: [FieldBlocValidators.required]);
 
-  final reason = TextFieldBloc();
+  final reason = TextFieldBloc(validators: [FieldBlocValidators.required]);
 
-  final infractionDate = InputFieldBloc<DateTime, Object>();
-
-
-  WizardFormBloc(
-      String ticketNumber, String licensePlate, String fine, String codeNo) {
+  WizardFormBloc(String ticketNumber, String licensePlate, String fine,
+      String codeNo, DateTime date, String location) {
     this.fineForm = TextFieldBloc(
         initialValue: fine, validators: [FieldBlocValidators.required]);
     this.code = TextFieldBloc(
@@ -49,7 +54,10 @@ class WizardFormBloc extends FormBloc<String, String> {
     this.plate = TextFieldBloc(
         initialValue: licensePlate, validators: [FieldBlocValidators.required]);
     this.address = TextFieldBloc(
-      validators: [FieldBlocValidators.required]);
+        initialValue: location, validators: [FieldBlocValidators.required]);
+    this.infractionDate = InputFieldBloc<DateTime, Object>(
+        initialValue: date, validators: [FieldBlocValidators.required]);
+    print('Constructor Date is $date');
     addFieldBlocs(
       step: 0,
       fieldBlocs: [firstName, lastName, birthDate],
@@ -69,6 +77,7 @@ class WizardFormBloc extends FormBloc<String, String> {
   TextFieldBloc ticket_id;
   TextFieldBloc plate;
   TextFieldBloc address;
+  InputFieldBloc<DateTime, Object> infractionDate;
 
   @override
   void onSubmitting() async {
@@ -81,12 +90,17 @@ class WizardFormBloc extends FormBloc<String, String> {
       String uid = user.uid.toString();
 
       Firestore.instance.collection('users').document(uid).setData({
-        'first name':firstName.value,
+        'first name': firstName.value,
         'last name': lastName.value,
         'birthdate': birthDate.value,
       });
 
-      Firestore.instance.collection('users').document(uid).collection('tickets').document().setData({
+      Firestore.instance
+          .collection('users')
+          .document(uid)
+          .collection('tickets')
+          .document()
+          .setData({
         'reason': reason.value,
         'ticket_id': ticket_id.value,
         'plate': plate.value,
@@ -100,7 +114,7 @@ class WizardFormBloc extends FormBloc<String, String> {
     }
   }
 
-  dispose(){
+  dispose() {
     firstName.close();
     lastName.close();
     birthDate.close();
@@ -112,14 +126,20 @@ class WizardFormBloc extends FormBloc<String, String> {
     address.close();
     infractionDate.close();
   }
-
 }
 
 class WizardForm extends StatefulWidget {
-  final String ticketNumber, licensePlate, fine, codeNo;
-  WizardForm(
-      {Key key, this.ticketNumber, this.licensePlate, this.fine, this.codeNo})
-      : super(key: key);
+  final String ticketNumber, licensePlate, fine, codeNo, location;
+  DateTime date;
+  WizardForm({
+    Key key,
+    this.ticketNumber,
+    this.licensePlate,
+    this.fine,
+    this.codeNo,
+    this.date,
+    this.location,
+  }) : super(key: key);
   @override
   _WizardFormState createState() => _WizardFormState();
 }
@@ -130,7 +150,12 @@ class _WizardFormState extends State<WizardForm> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => WizardFormBloc(
-          widget.ticketNumber, widget.licensePlate, widget.fine, widget.codeNo),
+          widget.ticketNumber,
+          widget.licensePlate,
+          widget.fine,
+          widget.codeNo,
+          widget.date,
+          widget.location),
       child: Builder(
         builder: (context) {
           return Theme(

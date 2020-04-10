@@ -18,7 +18,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String uid, ocrLine;
-  String ticketNumber, licensePlate, fine, codeNo;
+  String ticketNumber, licensePlate, fine, codeNo, location;
+  DateTime date;
   File pickedImage;
   bool _loading = false;
 
@@ -26,6 +27,8 @@ class _HomePageState extends State<HomePage> {
   RegExp plateCheck = RegExp(r'^[A-Z]{4}\d{3}');
   RegExp priceCheck = RegExp(r'[$]\s?\d+[,|\.]?\s?\d{2}');
   RegExp reasonCheck = RegExp(r'[C|c][o|O]de\s?N[o|O][\.|,]?\s?\d{1,6}');
+  RegExp dateCheck = RegExp(r'20\d\d[\.|,|\s]\d\d[\.|,|\s]\d\d');
+  RegExp locationCheck = RegExp(r'^NR\s');
 
 //Get Image From Camera
 
@@ -81,7 +84,19 @@ class _HomePageState extends State<HomePage> {
           }
           print('Fine is $fine');
         }
-        //print(ocrLine);
+        if (dateCheck.hasMatch(ocrLine)) {
+          date = DateTime.parse(dateCheck
+              .firstMatch(ocrLine)
+              .group(0)
+              .replaceAllMapped(RegExp(r'\.'), (Match m) => '-'));
+          print('date is $date');
+        }
+        if (locationCheck.hasMatch(ocrLine)) {
+          location = ocrLine;
+          print('location is $location');
+        }
+
+        print(ocrLine);
       }
     }
 
@@ -93,6 +108,8 @@ class _HomePageState extends State<HomePage> {
                   fine: fine,
                   licensePlate: licensePlate,
                   codeNo: codeNo,
+                  date: date,
+                  location: location,
                 )));
     _loading = false;
   }
