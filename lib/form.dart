@@ -7,26 +7,43 @@ import 'package:ticket_app/homePage.dart';
 void main() => runApp(FormPage());
 
 class FormPage extends StatelessWidget {
-  final String ticketNumber, licensePlate, fine, codeNo, location;
-  final DateTime date;
+  final String ticketNumber, licensePlate, fine, codeNo, reason, firstName, lastName, infractionAddress,documentid;
+  final DateTime birthdate, infractionDate;
+  final bool newticket;
+
   const FormPage(
       {Key key,
+      this.newticket,
+      this.reason,
       this.ticketNumber,
       this.licensePlate,
       this.fine,
       this.codeNo,
-      this.date,
-      this.location})
+      this.firstName,
+      this.lastName,
+      this.birthdate, 
+      this.infractionDate, 
+      this.infractionAddress,
+      this.documentid,
+      })
       : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: WizardForm(
+        firstName: firstName,
+        lastName: lastName,
+        birthdate: birthdate,
+        reason: reason,
+        infractionAddress: infractionAddress,
+        infractionDate: infractionDate,
         ticketNumber: ticketNumber,
         fine: fine,
         licensePlate: licensePlate,
         codeNo: codeNo,
+        newticket:newticket,
+        documentid:documentid,
       ),
     );
   }
@@ -34,17 +51,17 @@ class FormPage extends StatelessWidget {
 
 class WizardFormBloc extends FormBloc<String, String> {
   static String ticketNumber;
-  final firstName = TextFieldBloc(validators: [FieldBlocValidators.required]);
 
-  final lastName = TextFieldBloc(validators: [FieldBlocValidators.required]);
+  WizardFormBloc({String ticketNumber, String licensePlate, String fine,
+      String codeNo, DateTime infractionDate, String location, String firstName, String lastName, DateTime birthDate, String reason, bool newticket, String documentid}) {
+    
+    this.firestoreDocumentID = documentid;
+    this.isnewticket = newticket;
+    this.firstNameform = TextFieldBloc(initialValue: firstName, validators: [FieldBlocValidators.required]);
+    this.lastNameform = TextFieldBloc(initialValue: lastName, validators: [FieldBlocValidators.required]);
+    this.birthDateform = InputFieldBloc<DateTime, Object>(initialValue: birthDate, validators: [FieldBlocValidators.required]);
+    this.reasonform = TextFieldBloc(initialValue: reason, validators: [FieldBlocValidators.required]);
 
-  final birthDate = InputFieldBloc<DateTime, Object>(
-      validators: [FieldBlocValidators.required]);
-
-  final reason = TextFieldBloc(validators: [FieldBlocValidators.required]);
-
-  WizardFormBloc(String ticketNumber, String licensePlate, String fine,
-      String codeNo, DateTime date, String location) {
     this.fineForm = TextFieldBloc(
         initialValue: fine, validators: [FieldBlocValidators.required]);
     this.code = TextFieldBloc(
@@ -55,29 +72,35 @@ class WizardFormBloc extends FormBloc<String, String> {
         initialValue: licensePlate, validators: [FieldBlocValidators.required]);
     this.address = TextFieldBloc(
         initialValue: location, validators: [FieldBlocValidators.required]);
-    this.infractionDate = InputFieldBloc<DateTime, Object>(
-        initialValue: date, validators: [FieldBlocValidators.required]);
-    print('Constructor Date is $date');
+    this.infractionDateform = InputFieldBloc<DateTime, Object>(
+        initialValue: infractionDate, validators: [FieldBlocValidators.required]);
+    print('Constructor location is $location');
     addFieldBlocs(
       step: 0,
-      fieldBlocs: [firstName, lastName, birthDate],
+      fieldBlocs: [firstNameform, lastNameform, birthDateform],
     );
     addFieldBlocs(
       step: 1,
-      fieldBlocs: [ticket_id, plate, code, fineForm, address, infractionDate],
+      fieldBlocs: [ticket_id, plate, code, fineForm, address, infractionDateform],
     );
     addFieldBlocs(
       step: 2,
-      fieldBlocs: [reason],
+      fieldBlocs: [reasonform],
     );
   }
 
+  String firestoreDocumentID;
+  bool isnewticket;
+  TextFieldBloc reasonform;
+  TextFieldBloc firstNameform;
+  TextFieldBloc lastNameform;
+  InputFieldBloc<DateTime, Object> birthDateform;
   TextFieldBloc fineForm;
   TextFieldBloc code;
   TextFieldBloc ticket_id;
   TextFieldBloc plate;
   TextFieldBloc address;
-  InputFieldBloc<DateTime, Object> infractionDate;
+  InputFieldBloc<DateTime, Object> infractionDateform;
 
   @override
   void onSubmitting() async {
@@ -90,72 +113,106 @@ class WizardFormBloc extends FormBloc<String, String> {
       String uid = user.uid.toString();
 
       Firestore.instance.collection('users').document(uid).setData({
-        'first name': firstName.value,
-        'last name': lastName.value,
-        'birthdate': birthDate.value,
+        'first name': firstNameform.value,
+        'last name': lastNameform.value,
+        'birthdate': birthDateform.value,
       });
-
-      Firestore.instance
+      
+      if (isnewticket){
+        Firestore.instance
           .collection('users')
           .document(uid)
           .collection('tickets')
           .document()
           .setData({
-        'reason': reason.value,
+        'reason': reasonform.value,
         'ticket_id': ticket_id.value,
         'plate': plate.value,
         'code': code.value,
         'fine': fineForm.value,
-        'address': address.value,
-        'infractionDate': infractionDate.value
+        'infractionAddress': address.value,
+        'infractionDate': infractionDateform.value
       });
+      }
+      else if (!isnewticket){
+        Firestore.instance
+          .collection('users')
+          .document(uid)
+          .collection('tickets')
+          .document(firestoreDocumentID)
+          .setData({
+        'reason': reasonform.value,
+        'ticket_id': ticket_id.value,
+        'plate': plate.value,
+        'code': code.value,
+        'fine': fineForm.value,
+        'infractionAddress': address.value,
+        'infractionDate': infractionDateform.value
+      });
+
+      }
 
       emitSuccess();
     }
   }
 
   dispose() {
-    firstName.close();
-    lastName.close();
-    birthDate.close();
-    reason.close();
+    firstNameform.close();
+    lastNameform.close();
+    birthDateform.close();
+    reasonform.close();
     fineForm.close();
     code.close();
     ticket_id.close();
     plate.close();
     address.close();
-    infractionDate.close();
+    infractionDateform.close();
   }
 }
 
 class WizardForm extends StatefulWidget {
-  final String ticketNumber, licensePlate, fine, codeNo, location;
-  DateTime date;
+  final String ticketNumber, licensePlate, fine, codeNo, reason, firstName, lastName, infractionAddress, documentid;
+  DateTime birthdate, infractionDate;
+
+  bool newticket;
+
   WizardForm({
     Key key,
+    this.reason,
     this.ticketNumber,
     this.licensePlate,
     this.fine,
     this.codeNo,
-    this.date,
-    this.location,
+    this.firstName,
+    this.lastName,
+    this.birthdate, 
+    this.infractionDate, 
+    this.infractionAddress, 
+    this.newticket, 
+    this.documentid,
   }) : super(key: key);
   @override
   _WizardFormState createState() => _WizardFormState();
 }
 
 class _WizardFormState extends State<WizardForm> {
-  var _type = StepperType.vertical;
+  var _type = StepperType.horizontal;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => WizardFormBloc(
-          widget.ticketNumber,
-          widget.licensePlate,
-          widget.fine,
-          widget.codeNo,
-          widget.date,
-          widget.location),
+          documentid: widget.documentid,
+          newticket: widget.newticket,
+          firstName: widget.firstName,
+          lastName: widget.lastName,
+          birthDate: widget.birthdate,
+          reason: widget.reason,
+          ticketNumber: widget.ticketNumber,
+          licensePlate: widget.licensePlate,
+          fine: widget.fine,
+          codeNo: widget.codeNo,
+          infractionDate: widget.infractionDate,
+          location: widget.infractionAddress),
       child: Builder(
         builder: (context) {
           return Theme(
@@ -167,7 +224,7 @@ class _WizardFormState extends State<WizardForm> {
               ),
             ),
             child: Scaffold(
-              resizeToAvoidBottomInset: false,
+              //resizeToAvoidBottomInset: false,
               body: SafeArea(
                 child: FormBlocListener<WizardFormBloc, String, String>(
                   onSubmitting: (context, state) => LoadingDialog.show(context),
@@ -204,11 +261,11 @@ class _WizardFormState extends State<WizardForm> {
 
   FormBlocStep _argumentStep(WizardFormBloc wizardFormBloc) {
     return FormBlocStep(
-      title: Text('Reasoning'),
+      title: Text('Reason'),
       content: Column(
         children: <Widget>[
           TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.reason,
+            textFieldBloc: wizardFormBloc.reasonform,
             maxLines: 10,
             enableOnlyWhenFormBlocCanSubmit: true,
             decoration: InputDecoration(
@@ -228,7 +285,7 @@ class _WizardFormState extends State<WizardForm> {
       content: Column(
         children: <Widget>[
           TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.firstName,
+            textFieldBloc: wizardFormBloc.firstNameform,
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
               labelText: 'First Name',
@@ -236,7 +293,7 @@ class _WizardFormState extends State<WizardForm> {
             ),
           ),
           TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.lastName,
+            textFieldBloc: wizardFormBloc.lastNameform,
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
               labelText: 'Last Name',
@@ -244,7 +301,7 @@ class _WizardFormState extends State<WizardForm> {
             ),
           ),
           DateTimeFieldBlocBuilder(
-            dateTimeFieldBloc: wizardFormBloc.birthDate,
+            dateTimeFieldBloc: wizardFormBloc.birthDateform,
             firstDate: DateTime(1900),
             initialDate: DateTime.now(),
             lastDate: DateTime.now(),
@@ -261,8 +318,8 @@ class _WizardFormState extends State<WizardForm> {
 
   FormBlocStep _ticketStep(WizardFormBloc wizardFormBloc) {
     return FormBlocStep(
-      title: Text('Ticket Information'),
-      content: Column(
+      title: Text('Ticket'),
+      content:Column(
         children: <Widget>[
           Container(
             child: Text('Please verify the following information:'),
@@ -306,7 +363,7 @@ class _WizardFormState extends State<WizardForm> {
             ),
           ),
           DateTimeFieldBlocBuilder(
-            dateTimeFieldBloc: wizardFormBloc.infractionDate,
+            dateTimeFieldBloc: wizardFormBloc.infractionDateform,
             firstDate: DateTime(1900),
             initialDate: DateTime.now(),
             lastDate: DateTime.now(),
@@ -318,7 +375,7 @@ class _WizardFormState extends State<WizardForm> {
           )
         ],
       ),
-    );
+      );
   }
 }
 

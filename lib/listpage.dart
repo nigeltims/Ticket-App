@@ -14,12 +14,30 @@ class ListPage extends StatefulWidget {
 
 class _ListPageState extends State<ListPage> {
   Future _data;
+  String userFirstName;
+  String userLastName;
+  DateTime userBirthDate;
+  String uid;
 
   Future getTickets() async {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    final String uid = user.uid.toString();
+    uid = user.uid.toString();
 
     var firestore = Firestore.instance;
+
+    //print('uid:'+uid);
+    DocumentReference userSnapshot = firestore.collection('users').document(uid);
+    userSnapshot.get().then( (datasnapshot) {
+    if (datasnapshot.exists) {
+      userFirstName = datasnapshot.data['first name'];
+      userLastName = datasnapshot.data['last name'];
+      userBirthDate = datasnapshot.data['birthdate'].toDate();
+    }
+    else{
+      userFirstName = '';
+      userLastName = '';
+      userBirthDate = DateTime.now();
+    }});
 
     QuerySnapshot qn = await firestore
         .collection('users')
@@ -93,20 +111,19 @@ class _ListPageState extends State<ListPage> {
                               ),
                               TicketItem(
                                 //color will be set using ticket document field
+                                firstName: userFirstName,
+                                lastName: userLastName,
+                                birthDate: userBirthDate,
+                                documentID: snapshot.data[index].documentID,
+                                infractionDate: snapshot.data[index].data['infractionDate'].toDate(),
+                                infractionAddress: snapshot.data[index].data['infractionAddress'],
+                                ticketNumber: snapshot.data[index].data['ticket_id'],
+                                code: snapshot.data[index].data['code'],
+                                plateID: snapshot.data[index].data['plate'], //"SUR 360",
+                                reason: snapshot.data[index].data['reason'], //"Parking in front of fire hydrant",
+                                amount: snapshot.data[index].data['fine'].toString(), //"\$55"
                                 foreColor: Color(0xff2BC8D8),
                                 backColor: Color(0xffE5F7F8),
-                                plateID: snapshot
-                                    .data[index].data['plate'], //"SUR 360",
-                                reason: snapshot.data[index].data[
-                                    'reason'], //"Parking in front of fire hydrant",
-                                amount: '\$' +
-                                    snapshot.data[index].data['fine']
-                                        .toString(), //"\$55"
-                                address: snapshot.data[index]
-                                    .data['address'], //"153 Burry Road",
-                                date: snapshot
-                                    .data[index].data['infractionDate']
-                                    .toDate(), //snapshot.data[index].data['date'],
                               ),
                             ]);
                           })

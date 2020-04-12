@@ -108,8 +108,9 @@ class _HomePageState extends State<HomePage> {
                   fine: fine,
                   licensePlate: licensePlate,
                   codeNo: codeNo,
-                  date: date,
-                  location: location,
+                  infractionDate: date,
+                  infractionAddress: location,
+                  newticket: true,
                 )));
     _loading = false;
   }
