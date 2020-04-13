@@ -21,6 +21,7 @@ class TicketItem extends StatelessWidget {
   final DateTime birthDate;
   final DateTime infractionDate;
   final String infractionAddress;
+  final String status;
   
   const TicketItem(
       {this.plateID,
@@ -35,13 +36,14 @@ class TicketItem extends StatelessWidget {
       this.lastName,
       this.birthDate,
       this.infractionAddress,
-      this.infractionDate});
+      this.infractionDate,
+      this.status});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
         onTap: () {
-          ticketDetail(context).show();
+          showDialog(context:context, builder: (BuildContext context) => ticketDetail(context));
           print("tapped on container");
         },
         child: Container(
@@ -72,7 +74,7 @@ class TicketItem extends StatelessWidget {
                           width: 20,
                         ),
                         Text(
-                          amount,
+                          '\$' + amount,
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18),
                         ),
@@ -120,45 +122,43 @@ class TicketItem extends StatelessWidget {
         );
   }
 
-  ticketDetail(context){
-    return Alert(
-      style: AlertStyle(
-        isCloseButton: false,
+  Widget ticketDetail(context){
+    return Dialog(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(7),
       ),
-      buttons:[
-         DialogButton(
-          child: Text(
-            "Edit",
-            style: TextStyle(color: Colors.white, fontSize: 20),
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => new FormPage(
-                      documentid: documentID,
-                      newticket: false,
-                      firstName: firstName,
-                      lastName: lastName,
-                      birthdate: birthDate,
-                      reason: reason,
-                      ticketNumber: ticketNumber, //TODO: change this, firebase
-                      fine: amount,
-                      licensePlate: plateID,
-                      codeNo: code, //TODO: change this, firebas
-                      infractionDate: infractionDate,
-                      infractionAddress: infractionAddress,
-                )));
-                },
-          width: 120,
-        )
-      ] ,
-      title: "Ticket Details",
-      context: context,
-      content: new Container(
+
+      // child: DialogButton(
+      //     child: Text(
+      //       "Edit",
+      //       style: TextStyle(color: Colors.white, fontSize: 20),
+      //     ),
+      //     onPressed: () {
+      //       Navigator.pop(context);
+      //       Navigator.push(
+      //         context,
+      //         MaterialPageRoute(
+      //           builder: (context) => new FormPage(
+      //                 documentid: documentID,
+      //                 newticket: false,
+      //                 firstName: firstName,
+      //                 lastName: lastName,
+      //                 birthdate: birthDate,
+      //                 reason: reason,
+      //                 ticketNumber: ticketNumber, 
+      //                 fine: amount,
+      //                 licensePlate: plateID,
+      //                 codeNo: code, 
+      //                 infractionDate: infractionDate,
+      //                 infractionAddress: infractionAddress,
+      //           )));
+      //           },
+      //     width: 120,
+      //   ),
+
+      child: new Container(
               width: 315,
-              height: 130,
+              height: 230,//130,
               decoration: BoxDecoration(
                   color: backColor,
                   borderRadius: BorderRadius.all(Radius.circular(7))),
@@ -166,7 +166,7 @@ class TicketItem extends StatelessWidget {
                 children: <Widget>[
                   Container(
                     width: 8,
-                    height: 130,
+                    height: 230,//130,
                     decoration: BoxDecoration(
                         color: foreColor,
                         borderRadius: BorderRadius.only(
@@ -184,46 +184,94 @@ class TicketItem extends StatelessWidget {
                             width: 20,
                           ),
                           Text(
-                            '\$' + amount,
+                            'Status: ' + status,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 18),
                           ),
-                          SizedBox(
-                            width: 130,
-                          ),
-                          Text(DateFormat('yyyy-MM-dd').format(infractionDate))
+                          // SizedBox(
+                          //   width: 130,
+                          // ),
+                          //Text(DateFormat('yyyy-MM-dd').format(infractionDate))
                         ],
                       ),
+                      SizedBox(height: 5),
                       Row(
                         children: <Widget>[
                           SizedBox(
                             width: 20,
                           ),
                           Text(
-                            plateID,
+                            'Fine: \$' + amount,
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+                            fontWeight: FontWeight.bold, fontSize: 18),
                           ),
                         ],
                       ),
+                      SizedBox(height: 5),
                       Row(
                         children: <Widget>[
                           SizedBox(
                             width: 20,
-                            height: 30,
+                            height: 25,
                           ),
-                          Text(reason),
+                          Text('License Plate: ' + plateID,),
                         ],
                       ),
                       Row(
                         children: <Widget>[
+                          SizedBox(width: 20, height: 25),
+                          Text('Ticket Date: '+DateFormat('yyyy-MM-dd').format(infractionDate))
+                      ],),
+                      // SizedBox(height: 5),
+                      Row(
+                        children: <Widget>[
                           SizedBox(
                             width: 20,
-                            height: 10,
+                            height: 25,
                           ),
-                          Text(infractionAddress),
+                          Text('Reason: ' + reason),
                         ],
                       ),
+                      // SizedBox(height: 5),
+                      Row(
+                        children: <Widget>[
+                          SizedBox(
+                            width: 20,
+                            height: 25,
+                          ),
+                          Text('Address: ' + infractionAddress),
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          SizedBox(width: 20,),
+                          FlatButton(
+                            color: Color(0xffbcf2f5),
+                            child: Text('Edit',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)
+                            ),
+                            onPressed: (){
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => new FormPage(
+                                        documentid: documentID,
+                                        newticket: false,
+                                        firstName: firstName,
+                                        lastName: lastName,
+                                        birthdate: birthDate,
+                                        reason: reason,
+                                        ticketNumber: ticketNumber, 
+                                        fine: amount,
+                                        licensePlate: plateID,
+                                        codeNo: code, 
+                                        infractionDate: infractionDate,
+                                        infractionAddress: infractionAddress,
+                                  )));
+                            },),
+                        ],
+                      )
                     ],
                   )
                 ],
