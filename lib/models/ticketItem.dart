@@ -158,7 +158,7 @@ class TicketItem extends StatelessWidget {
 
       child: new Container(
               width: 315,
-              height: 230,//130,
+              height: 255,//230,//130,
               decoration: BoxDecoration(
                   color: backColor,
                   borderRadius: BorderRadius.all(Radius.circular(7))),
@@ -166,7 +166,7 @@ class TicketItem extends StatelessWidget {
                 children: <Widget>[
                   Container(
                     width: 8,
-                    height: 230,//130,
+                    height: 255,//230,//130,
                     decoration: BoxDecoration(
                         color: foreColor,
                         borderRadius: BorderRadius.only(
@@ -208,6 +208,15 @@ class TicketItem extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 5),
+                      Row(
+                        children: <Widget>[
+                          SizedBox(
+                            width: 20,
+                            height: 25,
+                          ),
+                          Text('Ticket Number: ' + ticketNumber,),
+                        ],
+                      ),
                       Row(
                         children: <Widget>[
                           SizedBox(
