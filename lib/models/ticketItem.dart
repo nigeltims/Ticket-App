@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:ticket_app/form.dart';
+import 'package:ticket_app/listpage.dart';
 
 class TicketItem extends StatelessWidget {
   final String plateID;
@@ -23,9 +24,12 @@ class TicketItem extends StatelessWidget {
   final DateTime infractionDate;
   final String infractionAddress;
   final String status;
+  final Function listPageRefresh;
+
   
   const TicketItem(
-      {this.plateID,
+      {this.listPageRefresh,
+      this.plateID,
       this.backColor,
       this.foreColor,
       this.reason,
@@ -330,7 +334,7 @@ class TicketItem extends StatelessWidget {
               Firestore.instance.collection('users').document(uid).collection('tickets').document(documentID).delete();
               Navigator.of(context).pop(); //pop the dialog
               Navigator.of(context).pop(); //pop the card detail page
-
+              listPageRefresh();
 
             }, )
           ],
@@ -340,3 +344,4 @@ class TicketItem extends StatelessWidget {
   }
 
 }
+

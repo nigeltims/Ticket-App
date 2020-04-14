@@ -54,6 +54,13 @@ class _ListPageState extends State<ListPage> {
     _data = getTickets();
   }
 
+  void refresh(){
+    print('refresh');
+    setState(() {
+      _data = getTickets();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -111,6 +118,7 @@ class _ListPageState extends State<ListPage> {
                               ),
                               TicketItem(
                                 //color will be set using ticket document field
+                                listPageRefresh: refresh,
                                 status: snapshot.data[index].data['status'] == null ? '' : snapshot.data[index].data['status'],
                                 firstName: userFirstName,
                                 lastName: userLastName,
@@ -153,3 +161,4 @@ class _ListPageState extends State<ListPage> {
             }));
   }
 }
+
