@@ -22,6 +22,11 @@ class _HomePageState extends State<HomePage> {
   DateTime date;
   File pickedImage;
   bool _loading = false;
+  int _currentIndex = 0;
+  final List<Widget> _children = [
+    ListPage(),
+    NotificationPage(),
+  ];
 
   RegExp ticketCheck = RegExp(r'^..\d{6}');
   RegExp plateCheck = RegExp(r'^[A-Z]{4}\d{3}');
@@ -154,106 +159,24 @@ class _HomePageState extends State<HomePage> {
                 title: Text('Home'),
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.business),
-                title: Text('Business'),
+                icon: Icon(Icons.notifications),
+                title: Text('Notifications'),
               ),
             ],
             selectedItemColor: Color(0xff2BC8D8),
+            onTap: onTabTapped, // new
+            currentIndex: _currentIndex, // new
           ),
         ),
         body: Center(
-          child: _loading ? CircularProgressIndicator() : ListPage(),
-        )
+          child:
+              _loading ? CircularProgressIndicator() : _children[_currentIndex],
+        ));
+  }
 
-        // ListView(
-        //   physics: BouncingScrollPhysics(),
-        //   children: <Widget>[
-        //     SizedBox(
-        //       height: 20,
-        //     ),
-        //     Row(
-        //       children: <Widget>[
-        //       SizedBox(
-        //       width: 20,
-        //       ),
-        //         Text("Tickets",
-        //         style: TextStyle(
-        //           color: Color(0xff241A3C),
-        //           // fontFamily: 'FuturaBold',
-        //           fontSize: 30,
-        //           fontWeight: FontWeight.bold
-        //         ),
-        //         ),
-        //       SizedBox(
-        //       width: 180,
-        //       ),
-        //       IconButton(icon: Icon(Icons.settings), onPressed: (){
-        //             FirebaseAuth.instance.signOut();
-        //       Navigator.push(context,
-        //           CupertinoPageRoute(builder: (context) => AuthService().handleAuth()));
-        //       })
-        //       ],
-        //     ),
-
-        //     Column(
-        //       children: <Widget>[
-        //         SizedBox(
-        //           height: 15,
-        //         ),
-        //     TicketItem(
-        //       foreColor: Color(0xff2BC8D8),
-        //       backColor: Color(0xffE5F7F8),
-        //       plateID: "SUR 360",
-        //       reason: "Parking in front of fire hydrant",
-        //       amount: "\$55",
-        //       address: "153 Burry Road",
-        //       date: DateTime.now(),
-        //     ),
-        //         SizedBox(
-        //           height: 15,
-        //         ),
-        //     TicketItem(
-        //       foreColor: Color(0xffFF6E6E),
-        //       backColor: Color(0xffFFF1F1),
-        //       plateID: "SUR 360",
-        //       reason: "Parking in front of fire hydrant",
-        //       amount: "\$55",
-        //       address: "153 Burry Road",
-        //       date: DateTime.now(),
-        //     ),
-        //         SizedBox(
-        //           height: 15,
-        //         ),
-        //     TicketItem(
-        //       foreColor: Color(0xff2BC8D8),
-        //       backColor: Color(0xffE5F7F8),
-        //       plateID: "SUR 360",
-        //       reason: "Parking in front of fire hydrant",
-        //       amount: "\$55",
-        //       address: "153 Burry Road",
-        //       date: DateTime.now(),
-        //     ),
-        //         SizedBox(
-        //           height: 15,
-        //         ),
-        //     TicketItem(
-        //       foreColor: Color(0xffFF6E6E),
-        //       backColor: Color(0xffFFF1F1),
-        //       plateID: "SUR 360",
-        //       reason: "Parking in front of fire hydrant",
-        //       amount: "\$55",
-        //       address: "153 Burry Road",
-        //       date: DateTime.now(),
-        //     ),
-
-        //         SizedBox(
-        //           height: 35,
-        //         ),
-        //       ],
-        //     )
-        //   ],
-
-        // ),
-        );
+  void onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 }
