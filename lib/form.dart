@@ -7,12 +7,13 @@ import 'package:ticket_app/homePage.dart';
 void main() => runApp(FormPage());
 
 class FormPage extends StatelessWidget {
-  final String ticketNumber, licensePlate, fine, codeNo, reason, firstName, lastName, infractionAddress,documentid;
+  final String ticketNumber, licensePlate, fine, codeNo, reason, firstName, lastName, infractionAddress, documentid, status;
   final DateTime birthdate, infractionDate;
   final bool newticket;
 
   const FormPage(
       {Key key,
+      this.status,
       this.newticket,
       this.reason,
       this.ticketNumber,
@@ -53,8 +54,9 @@ class WizardFormBloc extends FormBloc<String, String> {
   static String ticketNumber;
 
   WizardFormBloc({String ticketNumber, String licensePlate, String fine,
-      String codeNo, DateTime infractionDate, String location, String firstName, String lastName, DateTime birthDate, String reason, bool newticket, String documentid}) {
+      String codeNo, DateTime infractionDate, String location, String firstName, String lastName, DateTime birthDate, String reason, bool newticket, String documentid, String ticketstatus}) {
     
+    this.status = ticketstatus;
     this.firestoreDocumentID = documentid;
     this.isnewticket = newticket;
     this.firstNameform = TextFieldBloc(initialValue: firstName, validators: [FieldBlocValidators.required]);
@@ -88,7 +90,8 @@ class WizardFormBloc extends FormBloc<String, String> {
       fieldBlocs: [reasonform],
     );
   }
-
+  
+  String status;
   String firestoreDocumentID;
   bool isnewticket;
   TextFieldBloc reasonform;
@@ -131,7 +134,8 @@ class WizardFormBloc extends FormBloc<String, String> {
         'code': code.value,
         'fine': fineForm.value,
         'infractionAddress': address.value,
-        'infractionDate': infractionDateform.value
+        'infractionDate': infractionDateform.value,
+        'status': 'Starting Contest',
       });
       }
       else if (!isnewticket){
@@ -147,7 +151,8 @@ class WizardFormBloc extends FormBloc<String, String> {
         'code': code.value,
         'fine': fineForm.value,
         'infractionAddress': address.value,
-        'infractionDate': infractionDateform.value
+        'infractionDate': infractionDateform.value,
+        'status': status,
       });
 
       }
@@ -171,13 +176,14 @@ class WizardFormBloc extends FormBloc<String, String> {
 }
 
 class WizardForm extends StatefulWidget {
-  final String ticketNumber, licensePlate, fine, codeNo, reason, firstName, lastName, infractionAddress, documentid;
+  final String ticketNumber, licensePlate, fine, codeNo, reason, firstName, lastName, infractionAddress, documentid, status;
   DateTime birthdate, infractionDate;
 
   bool newticket;
 
   WizardForm({
     Key key,
+    this.status,
     this.reason,
     this.ticketNumber,
     this.licensePlate,

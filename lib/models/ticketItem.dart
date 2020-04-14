@@ -265,6 +265,7 @@ class TicketItem extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => new FormPage(
+                                        status:status,
                                         documentid: documentID,
                                         newticket: false,
                                         firstName: firstName,
