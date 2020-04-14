@@ -111,7 +111,7 @@ class _ListPageState extends State<ListPage> {
                               ),
                               TicketItem(
                                 //color will be set using ticket document field
-                                status: snapshot.data[index].data['status'],
+                                status: snapshot.data[index].data['status'] == null ? '' : snapshot.data[index].data['status'],
                                 firstName: userFirstName,
                                 lastName: userLastName,
                                 birthDate: userBirthDate,
