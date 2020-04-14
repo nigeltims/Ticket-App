@@ -55,7 +55,6 @@ class _ListPageState extends State<ListPage> {
   }
 
   void refresh(){
-    print('refresh');
     setState(() {
       _data = getTickets();
     });
