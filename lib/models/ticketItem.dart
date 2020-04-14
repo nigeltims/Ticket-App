@@ -1,4 +1,5 @@
 
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -280,6 +281,16 @@ class TicketItem extends StatelessWidget {
                                         infractionAddress: infractionAddress,
                                   )));
                             },),
+                          SizedBox(width: 20,),
+                          FlatButton(
+                            color: Color(0xffbcf2f5),
+                            child: Text('Delete',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)
+                            ),
+                            onPressed: (){
+                              showDeleteDialog(context);
+                            },
+                          )
                         ],
                       )
                     ],
@@ -289,4 +300,43 @@ class TicketItem extends StatelessWidget {
             )));
 
   }
+
+  
+// user defined function
+  void showDeleteDialog(context) {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Delete Ticket?"),
+          content: new Text("This will delete your ticket, and you will have to re-submit the ticket."),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text('Accept'),
+              onPressed: () async{
+
+              FirebaseUser user = await FirebaseAuth.instance.currentUser();
+              String uid = user.uid.toString();
+
+              Firestore.instance.collection('users').document(uid).collection('tickets').document(documentID).delete();
+              Navigator.of(context).pop(); //pop the dialog
+              Navigator.of(context).pop(); //pop the card detail page
+
+
+            }, )
+          ],
+        );
+      },
+    );
+  }
+
 }
