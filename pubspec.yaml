@@ -25,6 +25,7 @@ dependencies:
   cloud_firestore: ^0.13.4+2
   flutter_form_bloc: ^0.12.1
   rflutter_alert: ^1.0.2
+  firebase_messaging: ^5.1.4
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -112,10 +112,15 @@ class WizardFormBloc extends FormBloc<String, String> {
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
       String uid = user.uid.toString();
 
+      var numTickets;
+      Firestore.instance.collection('users').document(uid).get().then((DocumentSnapshot) => numTickets = DocumentSnapshot.data['num_tickets'].toString());
+      numTickets +=1 ;
+
       Firestore.instance.collection('users').document(uid).setData({
         'first name': firstNameform.value,
         'last name': lastNameform.value,
         'birthdate': birthDateform.value,
+        'num_tickets': numTickets
       });
       
       if (isnewticket){

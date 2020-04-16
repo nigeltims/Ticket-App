@@ -7,7 +7,7 @@ import 'package:ticket_app/screens/login_screen.dart';
 import 'package:ticket_app/homePage.dart';
 
 class AuthService {
- 
+
   
   //Handles Auth
   handleAuth() {

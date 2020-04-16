@@ -1,6 +1,10 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'dart:io';
+
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -120,6 +124,8 @@ class _HomePageState extends State<HomePage> {
     _loading = false;
   }
 
+  final FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
+
   @override
   void initState() {
     this.uid = '';
@@ -132,6 +138,26 @@ class _HomePageState extends State<HomePage> {
     });
 
     super.initState();
+
+    if (Platform.isIOS){
+      _firebaseMessaging.requestNotificationPermissions(IosNotificationSettings());
+    }
+
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async{
+        print('onMessage: $message');        
+      },onResume: (Map<String, dynamic> message) async{
+        print('onResume: $message');        
+      },onLaunch: (Map<String, dynamic> message) async{
+        print('onLaunch: $message');        
+      },
+    );
+    _firebaseMessaging.getToken().then((token){
+      var firestore = Firestore.instance;
+      firestore.collection('users').document(uid).updateData({
+        'fcm_token': token,
+      });
+    });
   }
 
   @override
