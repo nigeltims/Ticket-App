@@ -361,12 +361,21 @@ class TicketItem extends StatelessWidget {
                 FirebaseUser user = await FirebaseAuth.instance.currentUser();
                 String uid = user.uid.toString();
 
+                var numTickets;
+                Firestore.instance.collection('users').document(uid).get().then((DocumentSnapshot) => numTickets = DocumentSnapshot.data['num_tickets'].toString());
+                numTickets -=1 ;
+
                 Firestore.instance
                     .collection('users')
                     .document(uid)
                     .collection('tickets')
                     .document(documentID)
                     .delete();
+                
+                Firestore.instance.collection('users').document(uid).setData({
+                  'num_tickets': numTickets,
+                });
+
                 Navigator.of(context).pop(); //pop the dialog
                 Navigator.of(context).pop(); //pop the card detail page
                 listPageRefresh();
