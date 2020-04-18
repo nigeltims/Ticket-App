@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -110,6 +111,11 @@ class WizardFormBloc extends FormBloc<String, String> {
   TextFieldBloc address;
   InputFieldBloc<DateTime, Object> infractionDateform;
 
+  //final FirebaseStorage _storage = FirebaseStorage(storageBucket:'gs://ticketapp-759c2.appspot.com');
+  StorageUploadTask _uploadTask;
+
+  List <File> imagesList = [];
+
   @override
   void onSubmitting() async {
     if (state.currentStep == 0) {
@@ -167,6 +173,15 @@ class WizardFormBloc extends FormBloc<String, String> {
 
       }
 
+      if (imagesList.length > 0){
+
+        for(var i = 0 ; i <imagesList.length; i++ ) { 
+          String filePath = 'images/$uid/${ticket_id.value}/${DateTime.now()}.png';
+          final StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(filePath);
+          final StorageUploadTask task = firebaseStorageRef.putFile(imagesList[i]);
+        }
+      }
+ 
       emitSuccess();
     }
   }
@@ -306,6 +321,7 @@ class _WizardFormState extends State<WizardForm> {
               
               setState(() {
                 tempImage = tempStore;
+                print(tempImage.lengthSync());
               });
 
               File cropped = await ImageCropper.cropImage(
@@ -323,6 +339,8 @@ class _WizardFormState extends State<WizardForm> {
               setState((){
                 imageList.add(cropped ?? tempImage);
               });              
+
+              wizardFormBloc.imagesList = imageList;
 
             },
           ),
@@ -340,6 +358,7 @@ class _WizardFormState extends State<WizardForm> {
               var tempStore = await ImagePicker.pickImage(source: ImageSource.gallery);
               setState(() {
                 tempImage = tempStore;
+                print(tempImage.lengthSync());
               });
 
               File cropped = await ImageCropper.cropImage(
@@ -356,7 +375,9 @@ class _WizardFormState extends State<WizardForm> {
 
               setState((){
                 imageList.add(cropped ?? tempImage);
-              });              
+              });        
+
+              wizardFormBloc.imagesList = imageList;      
 
             },
           ),
