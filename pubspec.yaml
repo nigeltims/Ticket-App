@@ -26,6 +26,11 @@ dependencies:
   flutter_form_bloc: ^0.12.1
   rflutter_alert: ^1.0.2
   firebase_messaging: ^5.1.4
+  firebase_core: ^0.4.4+3
+  firebase_storage: ^3.1.5
+  image_cropper: ^1.2.1
+
+
 
 
   # The following adds the Cupertino Icons font to your application.

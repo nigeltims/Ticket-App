@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'dart:io';
+import 'package:image_cropper/image_cropper.dart';
 
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -48,6 +49,24 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       pickedImage = tempStore;
     });
+
+    File cropped = await ImageCropper.cropImage(
+      sourcePath: pickedImage.path,
+      androidUiSettings: AndroidUiSettings(
+        toolbarTitle: 'Crop Image',
+        toolbarColor: Color(0xff2BC8D8),
+        toolbarWidgetColor: Colors.white,
+      ),
+      iosUiSettings: IOSUiSettings(
+        minimumAspectRatio: 1.0,
+      )
+    );
+
+    setState((){
+      pickedImage = cropped ?? pickedImage;
+    });
+
+
 
     readText();
   }

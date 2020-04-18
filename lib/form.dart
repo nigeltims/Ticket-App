@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:ticket_app/homePage.dart';
+import 'package:image_picker/image_picker.dart';
+
 
 void main() => runApp(FormPage());
 
@@ -183,7 +188,7 @@ class WizardFormBloc extends FormBloc<String, String> {
 class WizardForm extends StatefulWidget {
   final String ticketNumber, licensePlate, fine, codeNo, reason, firstName, lastName, infractionAddress, documentid, status;
   DateTime birthdate, infractionDate;
-
+  
   bool newticket;
 
   WizardForm({
@@ -207,6 +212,9 @@ class WizardForm extends StatefulWidget {
 }
 
 class _WizardFormState extends State<WizardForm> {
+  List <File> imageList = [];
+  File tempImage;
+
   var _type = StepperType.horizontal;
   @override
   Widget build(BuildContext context) {
@@ -277,7 +285,7 @@ class _WizardFormState extends State<WizardForm> {
         children: <Widget>[
           TextFieldBlocBuilder(
             textFieldBloc: wizardFormBloc.reasonform,
-            maxLines: 10,
+            maxLines: 5,
             enableOnlyWhenFormBlocCanSubmit: true,
             decoration: InputDecoration(
               labelText: 'Please State Your Reasoning',
@@ -285,7 +293,95 @@ class _WizardFormState extends State<WizardForm> {
               filled: true,
             ),
           ),
-        ],
+          ButtonTheme(
+          minWidth: 200,
+          height:40,
+          child:FlatButton(
+            color: Color(0xffbcf2f5),
+            child: Text('Add Photo From Camera',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 14)),
+            onPressed: () async {
+              var tempStore = await ImagePicker.pickImage(source: ImageSource.camera);
+              
+              setState(() {
+                tempImage = tempStore;
+              });
+
+              File cropped = await ImageCropper.cropImage(
+                sourcePath: tempImage.path,
+                androidUiSettings: AndroidUiSettings(
+                  toolbarTitle: 'Crop Image',
+                  toolbarColor: Color(0xff2BC8D8),
+                  toolbarWidgetColor: Colors.white,
+                ),
+                iosUiSettings: IOSUiSettings(
+                  minimumAspectRatio: 1.0,
+                )
+              );
+
+              setState((){
+                imageList.add(cropped ?? tempImage);
+              });              
+
+            },
+          ),
+          ),
+          SizedBox(height: 2,),
+          ButtonTheme(
+          minWidth: 200,
+          height:40,
+          child:FlatButton(
+            color: Color(0xffbcf2f5),
+            child: Text('Add Photo From Gallery',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 14)),
+            onPressed: () async {
+              var tempStore = await ImagePicker.pickImage(source: ImageSource.gallery);
+              setState(() {
+                tempImage = tempStore;
+              });
+
+              File cropped = await ImageCropper.cropImage(
+                sourcePath: tempImage.path,
+                androidUiSettings: AndroidUiSettings(
+                  toolbarTitle: 'Crop Image',
+                  toolbarColor: Color(0xff2BC8D8),
+                  toolbarWidgetColor: Colors.white,
+                ),
+                iosUiSettings: IOSUiSettings(
+                  minimumAspectRatio: 1.0,
+                )
+              );
+
+              setState((){
+                imageList.add(cropped ?? tempImage);
+              });              
+
+            },
+          ),
+          ),
+          SizedBox(height: 5,),
+          Container(
+            height:100,
+            child:ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount:imageList.length,
+              itemBuilder: (context,index){
+                return Row(children: <Widget>[
+                  Image.file(
+                    imageList[index],
+                    width:100,
+                    height:100,
+                  ),
+                  SizedBox(
+                    width:10,)
+                ]
+                );
+              }
+          ))
+
+          ],
       ),
     );
   }
