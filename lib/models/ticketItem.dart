@@ -362,7 +362,12 @@ class TicketItem extends StatelessWidget {
                 String uid = user.uid.toString();
 
                 var numTickets;
-                Firestore.instance.collection('users').document(uid).get().then((DocumentSnapshot) => numTickets = DocumentSnapshot.data['num_tickets'].toString());
+                //Firestore.instance.collection('users').document(uid).get().then((DocumentSnapshot) => numTickets = DocumentSnapshot.data['num_tickets'].toString());
+                final DocumentReference document =   Firestore.instance.collection('users').document(uid);
+
+                await document.get().then<dynamic>(( DocumentSnapshot snapshot) async{
+                  numTickets = (snapshot.data['num_tickets']);
+                });
                 numTickets -=1 ;
 
                 Firestore.instance

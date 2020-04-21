@@ -110,6 +110,7 @@ class WizardFormBloc extends FormBloc<String, String> {
   TextFieldBloc plate;
   TextFieldBloc address;
   InputFieldBloc<DateTime, Object> infractionDateform;
+  String _uid;
 
   //final FirebaseStorage _storage = FirebaseStorage(storageBucket:'gs://ticketapp-759c2.appspot.com');
   StorageUploadTask _uploadTask;
@@ -125,10 +126,24 @@ class WizardFormBloc extends FormBloc<String, String> {
     } else if (state.currentStep == 2) {
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
       String uid = user.uid.toString();
+      _uid = uid;
 
       var numTickets;
-      Firestore.instance.collection('users').document(uid).get().then((DocumentSnapshot) => numTickets = DocumentSnapshot.data['num_tickets'].toString());
-      numTickets +=1 ;
+      //Firestore.instance.collection('users').document(uid).get().then((documentSnapshot) => print(documentSnapshot));//numTickets = int.parse(documentSnapshot.data['num_tickets']));
+      
+      final DocumentReference document =   Firestore.instance.collection('users').document(uid);
+
+      await document.get().then<dynamic>(( DocumentSnapshot snapshot) async{
+        numTickets = (snapshot.data['num_tickets']);
+      });
+ 
+      // var helper;
+
+      // print('NumTickets' + numTickets);
+      // helper = int.parse(numTickets++) ;
+      // numTickets = helper.toString();
+      numTickets++;
+      print(numTickets);
 
       Firestore.instance.collection('users').document(uid).setData({
         'first name': firstNameform.value,
@@ -173,17 +188,26 @@ class WizardFormBloc extends FormBloc<String, String> {
 
       }
 
+      print('imagesList 1');
+      print(imagesList);
+
       if (imagesList.length > 0){
 
-        for(var i = 0 ; i <imagesList.length; i++ ) { 
-          String filePath = 'images/$uid/${ticket_id.value}/${DateTime.now()}.png';
-          final StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(filePath);
-          final StorageUploadTask task = firebaseStorageRef.putFile(imagesList[i]);
+       //submitphoto(imagesList[0]); 
+
+        for(var i = 0 ; i <imagesList.length; i=1+i ) { 
+          submitphoto(imagesList[i]);
         }
       }
  
       emitSuccess();
     }
+  }
+
+  void submitphoto(File file){
+    String filePath = 'images/$_uid/${ticket_id.value}/${DateTime.now()}.png';
+    final StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(filePath);
+    final StorageUploadTask task = firebaseStorageRef.putFile(file);
   }
 
   dispose() {
@@ -339,7 +363,7 @@ class _WizardFormState extends State<WizardForm> {
               setState((){
                 imageList.add(cropped ?? tempImage);
               });              
-
+              //print(imageList);
               wizardFormBloc.imagesList = imageList;
 
             },
@@ -377,8 +401,10 @@ class _WizardFormState extends State<WizardForm> {
                 imageList.add(cropped ?? tempImage);
               });        
 
+              //print(imageList);
               wizardFormBloc.imagesList = imageList;      
-
+              //print('imagesList');
+              //print(wizardFormBloc.imagesList);
             },
           ),
           ),
