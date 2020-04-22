@@ -225,7 +225,8 @@ class WizardFormBloc extends FormBloc<String, String> {
 }
 
 class WizardForm extends StatefulWidget {
-  final String ticketNumber, licensePlate, fine, codeNo, reason, firstName, lastName, infractionAddress, documentid, status;
+  final String ticketNumber, licensePlate, fine, codeNo, firstName, lastName, infractionAddress, documentid, status;
+  String reason;
   DateTime birthdate, infractionDate;
   
   bool newticket;
@@ -318,6 +319,8 @@ class _WizardFormState extends State<WizardForm> {
   }
 
   FormBlocStep _argumentStep(WizardFormBloc wizardFormBloc) {
+    var tempReason;
+
     return FormBlocStep(
       title: Text('Reason'),
       content: Column(
@@ -341,13 +344,14 @@ class _WizardFormState extends State<WizardForm> {
                 style: TextStyle(
                     fontWeight: FontWeight.bold, fontSize: 14)),
             onPressed: () async {
+              tempReason = wizardFormBloc.reasonform.value;
+              FocusScope.of(context).unfocus(focusPrevious: true);
               var tempStore = await ImagePicker.pickImage(source: ImageSource.camera);
-              
               setState(() {
                 tempImage = tempStore;
                 print(tempImage.lengthSync());
               });
-
+              FocusScope.of(context).unfocus(focusPrevious: true);
               File cropped = await ImageCropper.cropImage(
                 sourcePath: tempImage.path,
                 androidUiSettings: AndroidUiSettings(
@@ -379,12 +383,13 @@ class _WizardFormState extends State<WizardForm> {
                 style: TextStyle(
                     fontWeight: FontWeight.bold, fontSize: 14)),
             onPressed: () async {
+              FocusScope.of(context).unfocus(focusPrevious: true);
               var tempStore = await ImagePicker.pickImage(source: ImageSource.gallery);
               setState(() {
                 tempImage = tempStore;
                 print(tempImage.lengthSync());
               });
-
+              FocusScope.of(context).unfocus(focusPrevious: true);
               File cropped = await ImageCropper.cropImage(
                 sourcePath: tempImage.path,
                 androidUiSettings: AndroidUiSettings(
