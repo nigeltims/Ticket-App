@@ -416,13 +416,41 @@ class _WizardFormState extends State<WizardForm> {
               itemCount:imageList.length,
               itemBuilder: (context,index){
                 return Row(children: <Widget>[
-                  Image.file(
-                    imageList[index],
-                    width:100,
-                    height:100,
+                  Stack(
+                    children: 
+                      <Widget> [
+                        IgnorePointer(
+                          child:
+                          Image.file(
+                          imageList[index],
+                          width:100,
+                          height:100,
+                          fit: BoxFit.fill
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 78,
+                          right: 6,
+                          child: InkWell(
+                            onTap: () {
+                              showDeleteDialog(context,index,wizardFormBloc);
+                              setState(() {
+                              });
+                            },
+                              child:Container(
+                                child:Icon(
+                                  Icons.cancel,
+                                  color:Colors.red
+                                ),
+                                height:20,
+                                width:20,
+                              )
+                          ),
+                        ),
+                      ],
                   ),
                   SizedBox(
-                    width:10,)
+                    width:10,),  
                 ]
                 );
               }
@@ -432,6 +460,40 @@ class _WizardFormState extends State<WizardForm> {
       ),
     );
   }
+
+  void showDeleteDialog(context,index,wizardform) {
+  // flutter defined function
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      // return object of type Dialog
+      return AlertDialog(
+        title: new Text("Delete Image?"),
+        content: new Text(
+            "This will delete the image."),
+        actions: <Widget>[
+          // usually buttons at the bottom of the dialog
+          new FlatButton(
+            child: new Text("Cancel"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          new FlatButton(
+            child: new Text('Accept'),
+            onPressed: () async {
+              setState(() {
+                imageList.removeAt(index);
+                wizardform.imagesList = imageList;
+              });
+              Navigator.of(context).pop(); //pop the dialog
+            },
+          )
+        ],
+      );
+    },
+  );
+}  
 
   FormBlocStep _personalStep(WizardFormBloc wizardFormBloc) {
     return FormBlocStep(
